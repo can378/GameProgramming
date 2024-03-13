@@ -35,14 +35,14 @@ public:
 			curB.X = posX;
 			curB.Y = posY;
 			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), curB);
-			std::cout << "!\n";
+			std::cout << "!";
 			Flight();
 		}
 	}
 	void Flight()
 	{
 		posY -= 1;
-		if (posY == 0) { isFlying = false;  }
+		if (posY <= 0) { isFlying = false;  }
 	}
 
 	  int posX;
@@ -145,7 +145,8 @@ void Render() {
 	//// 1.2. 배경 부분
 	for (int i = 0; i < sizeH; i++) {
 		for (int j = 0; j < sizeW; j++) {
-			std::cout << "_";
+			if (i == g_Y && j == g_X) { std::cout << "*"; }
+			else { std::cout << "_"; }
 		}
 		std::cout << std::endl;
 	}
@@ -162,6 +163,7 @@ void Render() {
 
 	oneBullet.DrawBullet();
 
+	/*
 	//// 2. 캐릭터 그리기.
 	// 2.1. 커서를 캐릭터가 그려질 위치로 옮긴다. 
 	cur.X = g_X;
@@ -170,7 +172,7 @@ void Render() {
 
 	// 2.2. 캐릭터 표정을 그린다.
 	std::cout << g_output;
-
+	*/
 	
 	
 
