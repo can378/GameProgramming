@@ -12,7 +12,7 @@ int g_Y;
 int sizeH;
 int sizeW;
 
-
+int bulletIndex;
 
 // 흘러간 시간 기록
 double g_elapsed_time_ms;
@@ -42,7 +42,11 @@ public:
 	void Flight()
 	{
 		posY -= 1;
-		if (posY < 0) { isFlying = false;  }
+		if (posY < 0) 
+		{ 
+			isFlying = false; 
+			
+		}
 	}
 
 	  int posX;
@@ -50,8 +54,9 @@ public:
 	  bool isFlying;
 
 };
-//std::vector<Bullet> bullets;
-Bullet oneBullet(0,0,false);
+
+//Bullet oneBullet(0,0,false);
+std::vector<Bullet> bullets(5, Bullet(0, 0, false));
 
 /////////////////////////////////////////////////////////////
 void InitGame() {
@@ -68,6 +73,12 @@ void InitGame() {
 	g_elapsed_time_ms = 0;
 
 
+
+
+	//bullet
+	bulletIndex = 0;
+
+
 	// std::cout 출력에 버퍼를 사용하여, 출력 속도가 느려지는 현상을 피한다.
 	setvbuf(stdout, NULL, _IOLBF, 4096);
 
@@ -76,6 +87,15 @@ void InitGame() {
 }
 
 
+
+bool isAllFlying()
+{
+	for (int i = 0; i < bullets.size(); i++)
+	{
+		if (bullets[i].isFlying == false) { return false; }
+	}
+	return true;
+}
 
 
 
@@ -87,32 +107,40 @@ void Update()
 {
 
 	//left
-	if (g_input == 1) {
-		g_X--;
-	}
+	if (g_input == 1) {	g_X--;	}
 	//right
-	else if (g_input == 2) {
-		g_X++;
-
-	}
+	else if (g_input == 2) { g_X++;	}
 	//up
-	else if (g_input == 3) {
-		g_Y--;
-
-	}
+	else if (g_input == 3) { g_Y--;	}
 	//down
-	else if(g_input==4){
-		g_Y++;
-
-	}
+	else if(g_input==4){ g_Y++;	}
 	//shot space
-	else if (g_input == 5&&oneBullet.isFlying!=true)
+	else if (g_input == 5)
 	{
-		//bullets.push_back(Bullet(g_X, g_Y-1));
-		oneBullet.posX = g_X;
-		oneBullet.posY = g_Y - 1;
-		oneBullet.isFlying = true;
+		/*
+		if (oneBullet.isFlying != true)
+		{
+			oneBullet.posX = g_X;
+			oneBullet.posY = g_Y - 1;
+			oneBullet.isFlying = true;
+		}
+		*/
+		//bullets.push_back(Bullet(g_X, g_Y - 1, true));
+		if (isAllFlying() == false)
+		{
+			bullets[bulletIndex].isFlying = true;
+			bullets[bulletIndex].posX = g_X;
+			bullets[bulletIndex].posY = g_Y;
+
+			if (bulletIndex == bullets.size() - 1)
+			{
+				bulletIndex = 0;
+			}
+			else { bulletIndex++; }
+		}
 		
+		
+
 	}
 
 	if (g_X > sizeW-1) { g_X = 0; }
@@ -129,15 +157,12 @@ void Update()
 
 
 
-
-
 /////////////////////////////////////////////////////////////
 // 그림을 그리는 함수.
 
 void Render() {
 	//// 1. 배경 그리기.
 	// 1.1. 커서를 콘솔 화면의 왼쪽 위 모서리 부분으로 옮긴다. 좌표(0, 0)
-	// <windows.h>에서 제공하는 함수를 사용한다.
 	COORD cur;
 	cur.X = 0;
 	cur.Y = 0;
@@ -152,17 +177,18 @@ void Render() {
 		std::cout << std::endl;
 	}
 
-	//// 1.3. 배경 아래에 시간을 표시한다,
-	std::cout << "Elapsed Time: " << g_elapsed_time_ms / 1000.0f << std::endl;
+	//// 1.3. 배경 아래에 시간
+	std::cout << "Elapsed Time: " << g_elapsed_time_ms / 1000.0f << std::endl<<bulletIndex;
 
 	/*
-	for (Bullet& bullet : bullets)
+	for (int i = 0; i < bullets.size(); i++)
 	{
-		bullet.DrawBullet();
+		if (bullets[i].isFlying == true) { bullets[i].DrawBullet(); }
+		
 	}
 	*/
-
-	oneBullet.DrawBullet();
+	
+	//oneBullet.DrawBullet();
 
 	/*
 	//// 2. 캐릭터 그리기.
@@ -183,11 +209,6 @@ void Render() {
 	// std::cout으로 출력한 내용 중, 아직 화면에 표시되 않고 버퍼에 남아 있는 것이 있다면, 모두 화면에 출력되도록 한다.
 	std::cout.flush();
 
-
-	
-	
-
-	//std::printf("x=%d y=%d\n",g_X,g_Y);
 }
 
 
