@@ -19,6 +19,12 @@
     <Filter Include="소스 파일\ShootingGame">
       <UniqueIdentifier>{f45844f4-f23b-4bcb-99e5-29c41e6d4df9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\DrawSDL">
+      <UniqueIdentifier>{cdd9c617-f478-4bd1-8bce-7b0cf5d785a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\DrawingTeq">
+      <UniqueIdentifier>{3dade960-be31-4510-aa22-53ed5c8544a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameFunc.cpp">
@@ -36,6 +42,18 @@
     <ClCompile Include="func_.cpp">
       <Filter>소스 파일\ShootingGame</Filter>
     </ClCompile>
+    <ClCompile Include="Drawing_GameFunc.cpp">
+      <Filter>소스 파일\DrawSDL</Filter>
+    </ClCompile>
+    <ClCompile Include="main_DrawInSDL.cpp">
+      <Filter>소스 파일\DrawSDL</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawingTechniques_GameFunc.cpp">
+      <Filter>소스 파일\DrawingTeq</Filter>
+    </ClCompile>
+    <ClCompile Include="main_DrawingTechniques.cpp">
+      <Filter>소스 파일\DrawingTeq</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameFunc.h">
@@ -43,6 +61,12 @@
     </ClInclude>
     <ClInclude Include="func_.h">
       <Filter>소스 파일\ShootingGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawing_GameFunc.h">
+      <Filter>소스 파일\DrawSDL</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawingTechniques_GameFunc.h">
+      <Filter>소스 파일\DrawingTeq</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

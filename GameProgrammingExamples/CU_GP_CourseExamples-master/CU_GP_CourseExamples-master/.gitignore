@@ -1,0 +1,8 @@
+Debug
+Release
+*.lib
+*.dll
+*/.vs
+*/Include/SDL2/
+*/Include/*
+tmp
