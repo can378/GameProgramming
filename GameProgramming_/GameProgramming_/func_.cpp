@@ -2,8 +2,11 @@
 #include <windows.h>
 #include<string>
 #include<vector>
+#include "SDL_image.h"
 
 int g_input;
+double g_elapsed_time_ms;// 흘러간 시간 기록
+
 std::string g_output;
 
 int g_X;
@@ -14,8 +17,18 @@ int sizeW;
 
 int bulletIndex;
 
-// 흘러간 시간 기록
-double g_elapsed_time_ms;
+
+
+
+
+SDL_Rect g_char_pos;
+SDL_Texture* g_ryu_sheet_texture;
+SDL_Rect g_source_rect[6];
+SDL_Rect g_destination_rect;
+
+int g_oryugen_sprite_num;
+int g_current_oryugen_id;
+
 
 class Bullet {
 
@@ -31,11 +44,10 @@ public:
 	{
 		if (isFlying)
 		{
-			COORD curB;
 			curB.X = posX;
 			curB.Y = posY;
 			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), curB);
-			std::cout << "!";
+			std::cout << "!"<<std::endl;
 			Flight();
 		}
 	}
@@ -45,17 +57,17 @@ public:
 		if (posY < 0) 
 		{ 
 			isFlying = false; 
-			
 		}
 	}
-
-	  int posX;
-	  int posY;
-	  bool isFlying;
+	
+	COORD curB;
+    int posX;
+	int posY;
+	bool isFlying;
 
 };
 
-//Bullet oneBullet(0,0,false);
+
 std::vector<Bullet> bullets(5, Bullet(0, 0, false));
 
 /////////////////////////////////////////////////////////////
@@ -73,6 +85,29 @@ void InitGame() {
 	g_elapsed_time_ms = 0;
 
 
+	//drawing
+	g_char_pos.x = 100;
+	g_char_pos.y = 100;
+	g_char_pos.w = 50;
+	g_char_pos.h = 100;
+	g_oryugen_sprite_num = 6;
+	g_current_oryugen_id = 0;
+
+	SDL_Surface* ryu_sheet_surface = IMG_Load("../Resources/60224.png");
+	g_ryu_sheet_texture = SDL_CreateTextureFromSurface(g_renderer, ryu_sheet_surface);
+	SDL_FreeSurface(ryu_sheet_surface);
+
+	g_source_rect[0] = { 7  , 1647, 69, 140 };
+	g_source_rect[1] = { 94 , 1647, 76, 140 };
+	g_source_rect[2] = { 171, 1647, 68, 140 };
+	g_source_rect[3] = { 240, 1647, 61, 140 };
+	g_source_rect[4] = { 312, 1647, 54, 140 };
+	g_source_rect[5] = { 390, 1647, 67, 140 };
+
+	g_destination_rect.x = 300;
+	g_destination_rect.y = 200;
+	g_destination_rect.w = g_source_rect[0].w;
+	g_destination_rect.h = g_source_rect[0].h;
 
 
 	//bullet
@@ -88,18 +123,6 @@ void InitGame() {
 
 
 
-bool isAllFlying()
-{
-	for (int i = 0; i < bullets.size(); i++)
-	{
-		if (bullets[i].isFlying == false) { return false; }
-	}
-	return true;
-}
-
-
-
-
 /////////////////////////////////////////////////////////////
 
 
@@ -107,40 +130,31 @@ void Update()
 {
 
 	//left
-	if (g_input == 1) {	g_X--;	}
+	if (g_input == 1) { g_X--; }
 	//right
 	else if (g_input == 2) { g_X++;	}
 	//up
-	else if (g_input == 3) { g_Y--;	}
+	else if (g_input == 3) { g_Y--;		}
 	//down
-	else if(g_input==4){ g_Y++;	}
+	else if(g_input==4){ g_Y++;		}
+
+
 	//shot space
-	else if (g_input == 5)
+	if (g_input == 5)
 	{
-		/*
-		if (oneBullet.isFlying != true)
+	
+		for (int i = 0; i < bullets.size(); i++)
 		{
-			oneBullet.posX = g_X;
-			oneBullet.posY = g_Y - 1;
-			oneBullet.isFlying = true;
-		}
-		*/
-		//bullets.push_back(Bullet(g_X, g_Y - 1, true));
-		if (isAllFlying() == false)
-		{
-			bullets[bulletIndex].isFlying = true;
-			bullets[bulletIndex].posX = g_X;
-			bullets[bulletIndex].posY = g_Y;
-
-			if (bulletIndex == bullets.size() - 1)
+			if (bullets[i].isFlying != true)
 			{
-				bulletIndex = 0;
+				bullets[i].posX = g_X;
+				bullets[i].posY = g_Y - 1;
+				bullets[i].isFlying = true;
+				break;
 			}
-			else { bulletIndex++; }
 		}
-		
-		
 
+		g_input = 0;
 	}
 
 	if (g_X > sizeW-1) { g_X = 0; }
@@ -178,31 +192,16 @@ void Render() {
 	}
 
 	//// 1.3. 배경 아래에 시간
-	std::cout << "Elapsed Time: " << g_elapsed_time_ms / 1000.0f << std::endl<<bulletIndex;
+	std::cout << "Elapsed Time: " << g_elapsed_time_ms / 1000.0f << std::endl<<bulletIndex<<std::endl;
 
-	/*
+
+	//Draw Bullet
 	for (int i = 0; i < bullets.size(); i++)
 	{
-		if (bullets[i].isFlying == true) { bullets[i].DrawBullet(); }
+		if (bullets[i].isFlying == true) 
+		{ bullets[i].DrawBullet(); }
 		
 	}
-	*/
-	
-	//oneBullet.DrawBullet();
-
-	/*
-	//// 2. 캐릭터 그리기.
-	// 2.1. 커서를 캐릭터가 그려질 위치로 옮긴다. 
-	cur.X = g_X;
-	cur.Y = g_Y;
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
-
-	// 2.2. 캐릭터 표정을 그린다.
-	std::cout << g_output;
-	*/
-	
-	
-
 
 
 	//// 3. 프레임 완성.
@@ -259,6 +258,7 @@ void HandleEvents()
 			break;
 		}
 	}
+
 }
 
 

@@ -7,9 +7,14 @@ int g_elapsed_time_ms;
 
 SDL_Rect g_char_pos;
 SDL_Texture* g_ryu_sheet_texture;
-SDL_Rect g_source_rect;
+SDL_Rect g_source_rect[6];
 SDL_Rect g_destination_rect;
 
+
+
+
+int g_oryugen_sprite_num;//add
+int g_current_oryugen_id;//add
 
 void InitGame() {
 	g_input = 0;
@@ -22,19 +27,30 @@ void InitGame() {
 
 	g_elapsed_time_ms = 0;
 
-	SDL_Surface* ryu_sheet_surface = IMG_Load("../../Resources/60224.png");
+	g_oryugen_sprite_num = 6;//add
+	g_current_oryugen_id = 0;//add
+
+	SDL_Surface* ryu_sheet_surface = IMG_Load("../Resources/60224.png");
 	g_ryu_sheet_texture = SDL_CreateTextureFromSurface(g_renderer, ryu_sheet_surface);
 	SDL_FreeSurface(ryu_sheet_surface);
 
+	/*
 	g_source_rect.x = 171;
 	g_source_rect.y = 1647;
 	g_source_rect.w = 67;
 	g_source_rect.h = 140;
+	*/
+	g_source_rect[0] = { 7  , 1647, 69, 140 };
+	g_source_rect[1] = { 94 , 1647, 76, 140 };
+	g_source_rect[2] = { 171, 1647, 68, 140 };
+	g_source_rect[3] = { 240, 1647, 61, 140 };
+	g_source_rect[4] = { 312, 1647, 54, 140 };
+	g_source_rect[5] = { 390, 1647, 67, 140 };
 
 	g_destination_rect.x = 300;
 	g_destination_rect.y = 200;
-	g_destination_rect.w = g_source_rect.w;
-	g_destination_rect.h = g_source_rect.h;
+	g_destination_rect.w = g_source_rect[0].w;
+	g_destination_rect.h = g_source_rect[0].h;
 }
 
 void HandleEvents() {
@@ -86,6 +102,12 @@ void Update() {
 		g_char_pos.x = 0;
 
 	g_elapsed_time_ms += 33;
+	
+	//add
+	g_current_oryugen_id++;
+	if (g_current_oryugen_id >= g_oryugen_sprite_num) {
+		g_current_oryugen_id = 0;
+	}
 }
 
 void Render() {
@@ -99,7 +121,12 @@ void Render() {
 	SDL_RenderFillRect(g_renderer, &g_char_pos);
 
 	// g_ryu_sheet_texture
-	SDL_RenderCopy(g_renderer, g_ryu_sheet_texture, &g_source_rect, &g_destination_rect);
+	//SDL_RenderCopy(g_renderer, g_ryu_sheet_texture, &g_source_rect, &g_destination_rect);
+	
+	SDL_RenderCopy(g_renderer,
+		g_ryu_sheet_texture,
+		&g_source_rect[g_current_oryugen_id],
+		&g_destination_rect);
 
 
 	SDL_RenderPresent(g_renderer);
